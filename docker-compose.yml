@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   apim-node1:
@@ -59,16 +57,7 @@ services:
       - ./nignx-conf/ssl:/etc/nginx/ssl
       - ./nignx-conf/log:/etc/nginx/log
     # Generates a self-signed cert on first run if none exists, then starts nginx
-    command: >
-      /bin/sh -c "
-        apk add --no-cache openssl &&
-        mkdir -p /etc/nginx/ssl /etc/nginx/log/am/https /etc/nginx/log/gw/https &&
-        [ -f /etc/nginx/ssl/server.crt ] || openssl req -x509 -nodes -days 365 -newkey rsa:2048
-          -keyout /etc/nginx/ssl/server.key
-          -out /etc/nginx/ssl/server.crt
-          -subj '/CN=api.am.wso2.com/O=WSO2/C=LK' &&
-        nginx -g 'daemon off;'
-      "
+    command: /bin/sh -c "apk add --no-cache openssl && mkdir -p /etc/nginx/ssl /etc/nginx/log/am/https /etc/nginx/log/gw/https && ([ -f /etc/nginx/ssl/server.crt ] || openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -subj '/CN=api.am.wso2.com/O=WSO2/C=LK') && nginx -g 'daemon off;'"
     depends_on:
       - apim-node1
       - apim-node2
