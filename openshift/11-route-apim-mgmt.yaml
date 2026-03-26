@@ -1,0 +1,26 @@
+# Route for Publisher, DevPortal, Admin Console, and Carbon management console.
+# OpenShift will auto-generate a hostname like:
+#   apim-mgmt-wso2-apim.apps.<cluster-domain>
+#
+# After this route is created, update [server].hostname in both ConfigMaps
+# (02 and 03) to match this hostname, then restart the APIM pods.
+#
+# Session affinity (stickiness) is enabled so the management console
+# always routes a browser session to the same APIM node.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: apim-mgmt
+  namespace: wso2-apim
+  labels:
+    app: apim-mgmt
+spec:
+  to:
+    kind: Service
+    name: apim-nginx
+  port:
+    targetPort: apim-mgmt
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

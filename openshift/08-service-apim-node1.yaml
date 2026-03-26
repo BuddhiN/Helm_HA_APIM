@@ -1,0 +1,31 @@
+# ClusterIP service for apim-node1.
+# Used for:
+#   - nginx upstream (ports 9443, 8243)
+#   - cross-node throttling from node2 (ports 5672, 9611, 9711)
+apiVersion: v1
+kind: Service
+metadata:
+  name: apim-node1
+  namespace: wso2-apim
+  labels:
+    app: apim-node1
+spec:
+  type: ClusterIP
+  selector:
+    app: apim-node1
+  ports:
+    - name: https-mgmt
+      port: 9443
+      targetPort: 9443
+    - name: https-gw
+      port: 8243
+      targetPort: 8243
+    - name: jms
+      port: 5672
+      targetPort: 5672
+    - name: tm-tcp
+      port: 9611
+      targetPort: 9611
+    - name: tm-ssl
+      port: 9711
+      targetPort: 9711

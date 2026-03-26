@@ -1,0 +1,26 @@
+# Route for the API Gateway (consumer API traffic).
+# OpenShift will auto-generate a hostname like:
+#   apim-gw-wso2-apim.apps.<cluster-domain>
+#
+# After this route is created, update the gateway environment endpoints
+# in both ConfigMaps (02 and 03):
+#   https_endpoint = "https://<apim-gw-route-hostname>"
+#   http_endpoint  = "http://<apim-gw-route-hostname>"
+# Then restart the APIM pods.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: apim-gw
+  namespace: wso2-apim
+  labels:
+    app: apim-gw
+spec:
+  to:
+    kind: Service
+    name: apim-nginx
+  port:
+    targetPort: apim-gw
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

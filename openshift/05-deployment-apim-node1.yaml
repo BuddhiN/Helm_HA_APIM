@@ -1,0 +1,82 @@
+# IMPORTANT: Replace YOUR_DOCKERHUB_USERNAME with your actual Docker Hub username.
+# Tag and push the image before applying:
+#   docker tag wso2-am-ha-local-1:latest YOUR_DOCKERHUB_USERNAME/wso2-am-ha-1:4.6.0
+#   docker push YOUR_DOCKERHUB_USERNAME/wso2-am-ha-1:4.6.0
+#
+# If the Docker Hub repository is private, create an image pull secret:
+#   oc create secret docker-registry dockerhub-secret \
+#     --docker-username=YOUR_DOCKERHUB_USERNAME \
+#     --docker-password=YOUR_DOCKERHUB_PASSWORD \
+#     --docker-email=YOUR_EMAIL \
+#     -n wso2-apim
+# Then add to spec: imagePullSecrets: [{name: dockerhub-secret}]
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apim-node1
+  namespace: wso2-apim
+  labels:
+    app: apim-node1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apim-node1
+  template:
+    metadata:
+      labels:
+        app: apim-node1
+    spec:
+      serviceAccountName: wso2-apim-sa
+      containers:
+        - name: apim-node1
+          image: YOUR_DOCKERHUB_USERNAME/wso2-am-ha-1:4.6.0
+          imagePullPolicy: Always
+          ports:
+            - name: https-mgmt
+              containerPort: 9443
+            - name: http-gw
+              containerPort: 8280
+            - name: https-gw
+              containerPort: 8243
+            - name: jms
+              containerPort: 5672
+            - name: tm-tcp
+              containerPort: 9611
+            - name: tm-ssl
+              containerPort: 9711
+          volumeMounts:
+            - name: deployment-toml
+              mountPath: /home/wso2carbon/wso2am-4.6.0/repository/conf/deployment.toml
+              subPath: deployment.toml
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -k -f https://localhost:9443/carbon/admin/login.jsp"
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 15
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -k -f https://localhost:9443/carbon/admin/login.jsp"
+            initialDelaySeconds: 300
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+      volumes:
+        - name: deployment-toml
+          configMap:
+            name: apim-node1-config

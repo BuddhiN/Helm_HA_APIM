@@ -1,0 +1,76 @@
+# IMPORTANT: Replace YOUR_DOCKERHUB_USERNAME with your actual Docker Hub username.
+# Tag and push the image before applying:
+#   docker tag wso2-am-ha-local-2:latest YOUR_DOCKERHUB_USERNAME/wso2-am-ha-2:4.6.0
+#   docker push YOUR_DOCKERHUB_USERNAME/wso2-am-ha-2:4.6.0
+#
+# node2 uses offset=1: all ports are +1 (e.g., 9443 -> 9444, 8243 -> 8244, 5672 -> 5673)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apim-node2
+  namespace: wso2-apim
+  labels:
+    app: apim-node2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apim-node2
+  template:
+    metadata:
+      labels:
+        app: apim-node2
+    spec:
+      serviceAccountName: wso2-apim-sa
+      containers:
+        - name: apim-node2
+          image: YOUR_DOCKERHUB_USERNAME/wso2-am-ha-2:4.6.0
+          imagePullPolicy: Always
+          ports:
+            - name: https-mgmt
+              containerPort: 9444
+            - name: http-gw
+              containerPort: 8281
+            - name: https-gw
+              containerPort: 8244
+            - name: jms
+              containerPort: 5673
+            - name: tm-tcp
+              containerPort: 9612
+            - name: tm-ssl
+              containerPort: 9712
+          volumeMounts:
+            - name: deployment-toml
+              mountPath: /home/wso2carbon/wso2am-4.6.0/repository/conf/deployment.toml
+              subPath: deployment.toml
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -k -f https://localhost:9444/carbon/admin/login.jsp"
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 15
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -k -f https://localhost:9444/carbon/admin/login.jsp"
+            initialDelaySeconds: 300
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+      volumes:
+        - name: deployment-toml
+          configMap:
+            name: apim-node2-config

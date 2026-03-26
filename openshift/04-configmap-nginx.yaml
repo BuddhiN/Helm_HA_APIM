@@ -1,0 +1,54 @@
+# nginx runs in HTTP mode (ports 9080/8080).
+# OpenShift Routes handle SSL termination externally.
+# nginx still connects to APIM upstream via HTTPS (proxy_ssl_verify off for self-signed certs).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: wso2-apim
+data:
+  apimHA.conf: |
+    upstream apim-mgmt {
+        ip_hash;
+        server apim-node1:9443;
+        server apim-node2:9444;
+    }
+
+    upstream apim-gw {
+        server apim-node1:8243;
+        server apim-node2:8244;
+    }
+
+    server {
+        listen 9080;
+        proxy_set_header X-Forwarded-Host   $host;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header Host               $http_host;
+        proxy_set_header X-Forwarded-Port   443;
+        location / {
+            proxy_pass         https://apim-mgmt;
+            proxy_ssl_verify   off;
+            proxy_read_timeout 5m;
+            proxy_send_timeout 5m;
+        }
+        access_log /var/log/nginx/am_access.log;
+        error_log  /var/log/nginx/am_error.log;
+    }
+
+    server {
+        listen 8080;
+        proxy_set_header X-Forwarded-Host   $host;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header Host               $http_host;
+        proxy_set_header X-Forwarded-Port   443;
+        location / {
+            proxy_pass         https://apim-gw;
+            proxy_ssl_verify   off;
+            proxy_read_timeout 5m;
+            proxy_send_timeout 5m;
+        }
+        access_log /var/log/nginx/gw_access.log;
+        error_log  /var/log/nginx/gw_error.log;
+    }
