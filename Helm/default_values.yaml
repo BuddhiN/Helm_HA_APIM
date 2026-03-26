@@ -596,7 +596,7 @@ wso2:
 
   deployment:
     # Configure High Availability
-    highAvailability: true
+    highAvailability: false
     # Container image configurations
     image:
       # -- Container registry credentials.
@@ -608,9 +608,9 @@ wso2:
       # -- Container registry hostname
       registry: "docker.io"
       # -- Azure ACR repository name consisting the image
-      repository: "buddhim/wso2-apim"
+      repository: "buddhim/wso2-apim-ha-cluster"
       # -- Docker image digest
-      digest: "sha256:1383b5893abb52384c2e64854901619faa993acb50ac275127aab75621e47997"
+      digest: "sha256:cd8763c8c171b787d7b462f9b6f74b537c6a87e71f5e84464042facbd2d42153"
       # -- Refer to the Kubernetes documentation on updating images (https://kubernetes.io/docs/concepts/containers/images/#updating-images)
       imagePullPolicy: Always
 
@@ -638,7 +638,7 @@ wso2:
     # Indicates whether the container starting
     startupProbe:
       # -- Number of seconds after the container has started before startup probes are initiated
-      initialDelaySeconds: 60
+      initialDelaySeconds: 300
       # -- How often (in seconds) to perform the probe
       periodSeconds: 10
       # -- Minimum consecutive successes for the probe to be considered successful after having failed
@@ -646,7 +646,7 @@ wso2:
     # Indicates whether the container is running
     livenessProbe:
       # -- Number of seconds after the container has started before liveness probes are initiated
-      initialDelaySeconds: 60
+      initialDelaySeconds: 300
       # -- How often (in seconds) to perform the probe
       periodSeconds: 10
       # -- Minimum consecutive successes for the probe to be considered successful after having failed
@@ -654,7 +654,7 @@ wso2:
     # Indicates whether the container is ready to service requests
     readinessProbe:
       # -- Number of seconds after the container has started before readiness probes are initiated
-      initialDelaySeconds: 60
+      initialDelaySeconds: 300
       # -- How often (in seconds) to perform the probe
       periodSeconds: 10
       # -- Minimum consecutive successes for the probe to be considered successful after having failed

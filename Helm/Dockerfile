@@ -1,4 +1,4 @@
-FROM registry.wso2.com/wso2-apim/am:4.6.0.16
+FROM registry.wso2.com/wso2-apim/am:4.6.0.13
 
 ARG USER=wso2carbon
 ARG USER_HOME=/home/${USER}

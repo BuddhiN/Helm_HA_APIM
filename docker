@@ -1,0 +1,32 @@
+docker exec apim-node1 nc -zv apim-ha.ccoejcr5bqzj.eu-north-1.rds.amazonaws.com 3306 2>&1
+
+sleep 15 && docker-compose logs --tail=30 apim-node1 2>&1 | grep -E "mysql|ERROR|Server startup|Mgt Console|Connection|started"
+
+docker exec apim-node1 bash -c "timeout 5 bash -c 'echo > /dev/tcp/apim-ha.ccoejcr5bqzj.eu-north-1.rds.amazonaws.com/3306' 2>&1 && echo 'REACHABLE' || echo 'UNREACHABLE'"
+
+docker-compose logs apim-node1 2>&1 | grep -E "CommunicationsException|Connection refused|Server startup|Mgt Console|ERROR|started in" | tail -20
+
+docker-compose logs apim-node1 2>&1 | grep -B2 "Connection refused" | grep -E "jdbc|host|connect" | head -10
+
+
+======
+check on how to caluculat how many ip adress i get from cidr block
+
+
+
+az aro show \
+  --name mtn-ha-cluster \
+  --resource-group mtn-apim-ha \
+  --query "{State:provisioningState, Version:clusterProfile.version, APIServer:apiserverProfile.url, Console:consoleProfile.url, WorkerCount:workerProfiles[0].count, WorkerVM:workerProfiles[0].vmSize}" \
+  -o table
+
+
+# Get credentials
+az aro list-credentials \
+  --name mtn-ha-cluster \
+  --resource-group mtn-apim-ha
+
+
+==========================================
+
+kubectl exec -n default apim-ha-1-wso2am-all-in-one-am-deployment-1-545d88df49-zfx9c -- cat /home/wso2carbon/wso2am-4.6.0/repository/conf/deployment.toml 
