@@ -254,3 +254,5 @@
 172.18.0.1 - - [19/Mar/2026:20:26:26 +0000] "GET /oidc/checksession?client_id=N0qSXuzRq3UY0wwYvMkVIiCIZB4a&redirect_uri=https://api.am.wso2.com/devportal/services/auth/callback/login HTTP/1.1" 200 3095 "https://api.am.wso2.com/devportal/apis" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
 172.18.0.1 - - [19/Mar/2026:20:26:26 +0000] "GET /api/am/devportal/v3/settings HTTP/1.1" 200 559 "https://api.am.wso2.com/devportal/apis" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
 172.18.0.1 - - [19/Mar/2026:20:26:29 +0000] "GET /api/am/devportal/v3/tags?limit=-1 HTTP/1.1" 200 92 "https://api.am.wso2.com/devportal/apis" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
+172.18.0.1 - - [25/Mar/2026:12:19:37 +0000] "GET / HTTP/1.1" 499 0 "-" "-"
+172.18.0.1 - - [26/Mar/2026:05:21:13 +0000] "GET / HTTP/1.1" 499 0 "-" "-"

@@ -40,7 +40,7 @@ aws:
 
 azure:
   # -- If Azure is used as the cloud provider
-  enabled: false
+  enabled: true
   keyVault:
     # -- Azure Key vault used for credential management
     name: ""
@@ -68,7 +68,7 @@ azure:
       subscriptionId: ""
       # -- Name of the Azure Resource Group to which the target Azure Key Vault belongs
       resourceGroup: ""
-  serviceAccount: "wso2am-all-in-one-svc-account"
+  serviceAccount: "wso2-sa"
   persistence:
     # Needed for persisting indexing related data
     # -- Persistent volume capacity
@@ -608,9 +608,9 @@ wso2:
       # -- Container registry hostname
       registry: "docker.io"
       # -- Azure ACR repository name consisting the image
-      repository: "buddhim/wso2-apim-ha-cluster"
+      repository: "buddhim/wso2-apim-openshift"
       # -- Docker image digest
-      digest: "sha256:cd8763c8c171b787d7b462f9b6f74b537c6a87e71f5e84464042facbd2d42153"
+      digest: "sha256:8476609cde36a2351574dff3078a82cfddfc1a9972d701694eec9c06ff36b0cd"
       # -- Refer to the Kubernetes documentation on updating images (https://kubernetes.io/docs/concepts/containers/images/#updating-images)
       imagePullPolicy: Always
 
